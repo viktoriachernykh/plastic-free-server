@@ -22,19 +22,31 @@ router.get("/product", async (req, res, next) => {
   }
 });
 
-router.get("/product/:id", async (req, res, next) => {
-  const productId = req.params.id;
-  try {
-    const product = await Product.findByPk(productId);
-    if (!product) {
-      res
-        .status(404)
-        .send({ message: "Product with this ID doesn't exist" })
-        .end();
+router.get("/product/:key", async (req, res, next) => {
+  const key = req.params.key;
+  if (!isNaN(key)) {
+    try {
+      const product = await Product.findByPk(key);
+      if (!product) {
+        res.status(404).send({ message: "Product with this ID doesn't exist" });
+      }
+      res.send(product);
+    } catch (error) {
+      next(error);
     }
-    res.send(product);
-  } catch (error) {
-    next(error);
+  } else {
+    try {
+      const product = await Product.findAll({ where: { name: key } });
+      if (!product.length > 0) {
+        res
+          .status(404)
+          .send({ message: "Product with this name doesn't exist" });
+      } else {
+        res.send(product);
+      }
+    } catch (error) {
+      next(error);
+    }
   }
 });
 
