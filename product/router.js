@@ -1,5 +1,7 @@
 const { Router } = require("express");
 const Product = require("./model");
+const Connect = require("../connect/model");
+const Store = require("../store/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 
@@ -29,9 +31,18 @@ router.get("/product/:key", async (req, res, next) => {
       const product = await Product.findByPk(key);
       if (!product) {
         res.status(404).send({ message: "Product with this ID doesn't exist" });
+      } else {
+        const productStores = await Connect.findAll({
+          where: { productId: product.id } // key
+        });
+        const productStoresIds = productStores.map(connect => connect.storeId);
+        const allStores = await Store.findAll();
+        const stores = allStores.filter(store =>
+          productStoresIds.includes(store.id)
+        );
+        const data = { product, stores };
+        res.send(data);
       }
-      // console.log(product);
-      res.send(product);
     } catch (error) {
       next(error);
     }
