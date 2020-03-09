@@ -5,8 +5,10 @@ const router = new Router();
 
 // router.post("/store", auth, async function(req, res, next) {
 router.post("/store", async function(req, res, next) {
+  // console.log(req.body);
   try {
     const store = await Store.create(req.body);
+    // console.log("store created???", store);
     res.send(store);
   } catch (error) {
     next(error);

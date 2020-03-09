@@ -30,6 +30,7 @@ router.get("/product/:key", async (req, res, next) => {
       if (!product) {
         res.status(404).send({ message: "Product with this ID doesn't exist" });
       }
+      // console.log(product);
       res.send(product);
     } catch (error) {
       next(error);
