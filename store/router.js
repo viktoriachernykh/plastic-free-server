@@ -1,17 +1,34 @@
+const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const Product = require("../product/model");
 const Connect = require("../connect/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
+const { Op } = require("sequelize");
 
 // router.post("/store", auth, async function(req, res, next) {
 router.post("/store", async function(req, res, next) {
-  // console.log(req.body);
+  googleId = req.body.google_place_id;
+  // console.log("my store", req.body);
   try {
-    const store = await Store.create(req.body);
-    // console.log("store created???", store);
-    res.send(store);
+    request(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
+    )
+      // .then(res => console.log("=====GOOGLE RES=====", res.body));
+      .then(res => {
+        const newStore = {
+          ...req.body,
+          name: res.body.result.name,
+          opening_hours: res.body.result.opening_hours.weekday_text
+        };
+        console.log("newStore!!!!!!!!!", newStore);
+
+        const store = Store.create(newStore).then(res =>
+          console.log("res", res)
+        );
+        // res.send(res.body);
+      });
   } catch (error) {
     next(error);
   }
@@ -43,6 +60,24 @@ router.get("/store/:id", async (req, res, next) => {
       );
       const data = { store, products };
       res.send(data);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/store/find/:keyword", async (req, res, next) => {
+  const keyword = req.params.keyword;
+  try {
+    const store = await Store.findAll({
+      where: {
+        name: { [Op.iLike]: `%${keyword}%` }
+      }
+    });
+    if (!store.length > 0) {
+      res.status(404).send({ message: "Store with this name doesn't exist" });
+    } else {
+      res.send(store);
     }
   } catch (error) {
     next(error);

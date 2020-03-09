@@ -10,6 +10,8 @@ const storeRouter = require("./store/router");
 const productRouter = require("./product/router");
 const connectRouter = require("./connect/router");
 
+require("dotenv").config();
+
 function onListen() {
   console.log(`Listening on port ${port}`);
 }
