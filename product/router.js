@@ -17,8 +17,13 @@ router.post("/product", async function(req, res, next) {
 });
 
 router.get("/product", async (req, res, next) => {
+  const limit = Math.min(req.query.limit || 5, 100);
+  const offset = req.query.offset || 0;
   try {
-    const products = await Product.findAll();
+    const products = await Product.findAndCountAll({
+      limit,
+      offset
+    });
     res.send(products);
   } catch (error) {
     next(error);
@@ -33,7 +38,7 @@ router.get("/product/:id", async (req, res, next) => {
       res.status(404).send({ message: "Product with this ID doesn't exist" });
     } else {
       const productStores = await Connect.findAll({
-        where: { productId: productId } // key
+        where: { productId: productId }
       });
       const productStoresIds = productStores.map(connect => connect.storeId);
       const allStores = await Store.findAll();

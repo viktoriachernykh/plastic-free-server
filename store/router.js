@@ -7,36 +7,39 @@ const Connect = require("../connect/model");
 const router = new Router();
 const { Op } = require("sequelize");
 
-// router.post("/store", auth, async function(req, res, next) {
 router.post("/store", async function(req, res, next) {
   googleId = req.body.google_place_id;
-  // console.log("my store", req.body);
   try {
     request(
       `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
-    )
-      // .then(res => console.log("=====GOOGLE RES=====", res.body));
-      .then(res => {
-        const newStore = {
-          ...req.body,
-          name: res.body.result.name,
-          opening_hours: res.body.result.opening_hours.weekday_text
-        };
-        console.log("newStore!!!!!!!!!", newStore);
-
-        const store = Store.create(newStore).then(res =>
-          console.log("res", res)
-        );
-        // res.send(res.body);
-      });
+    ).then(res => {
+      const newStore = {
+        ...req.body,
+        name: res.body.result.name
+        // opening_hours: res.body.result.opening_hours.weekday_text
+      };
+      try {
+        // console.log("=====newStore=======", newStore);
+        // const store = Store.create(newStore).then(res => res.dataValues);
+        // console.log("=====store created=======", res);
+      } catch (error) {
+        next(error);
+      }
+      // res.send();
+    });
   } catch (error) {
     next(error);
   }
 });
 
 router.get("/store", async (req, res, next) => {
+  const limit = Math.min(req.query.limit || 5, 100);
+  const offset = req.query.offset || 0;
   try {
-    const stores = await Store.findAll();
+    const stores = await Store.findAndCountAll({
+      limit,
+      offset
+    });
     res.send(stores);
   } catch (error) {
     next(error);

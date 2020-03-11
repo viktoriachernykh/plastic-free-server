@@ -15,14 +15,8 @@ const User = db.define("user", {
     type: Sequelize.STRING,
     allowNull: false
   },
-  // logo: {
-  //   type: Sequelize.STRING
-  // },
-  added_stores: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER)
-  },
-  added_products: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER)
+  logo: {
+    type: Sequelize.STRING
   },
   favorite_stores: {
     type: Sequelize.ARRAY(Sequelize.INTEGER)

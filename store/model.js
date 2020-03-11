@@ -12,7 +12,7 @@ const Store = db.define("store", {
     allowNull: false
   },
   opening_hours: {
-    type: Sequelize.STRING
+    type: Sequelize.ARRAY(Sequelize.INTEGER)
   },
   google_place_id: {
     type: Sequelize.STRING
