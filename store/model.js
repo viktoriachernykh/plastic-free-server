@@ -22,7 +22,4 @@ const Store = db.define("store", {
   products: { type: Sequelize.ARRAY(Sequelize.INTEGER) }
 });
 
-Store.belongsTo(User);
-User.hasMany(Store);
-
 module.exports = Store;
