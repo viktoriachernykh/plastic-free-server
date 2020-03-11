@@ -1,6 +1,5 @@
 const { Router } = require("express");
 const Product = require("./model");
-const Connect = require("../connect/model");
 const Store = require("../store/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
@@ -33,16 +32,10 @@ router.get("/product", async (req, res, next) => {
 router.get("/product/:id", async (req, res, next) => {
   const productId = req.params.id;
   try {
-    const product = await Product.findByPk(productId);
-    const productConnections = await Connect.findAll({
-      where: { productId: productId }
+    const product = await Product.findByPk(productId, {
+      include: [{ model: Store, as: "Store" }]
     });
-    const productStoresId = await productConnections.map(c => c.storeId);
-    const stores = await Store.findAll({
-      where: { id: productStoresId }
-    });
-    const data = { product, stores };
-    res.send(data);
+    res.send(product);
   } catch (error) {
     next(error);
   }

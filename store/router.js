@@ -2,7 +2,7 @@ const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const Product = require("../product/model");
-const Connect = require("../connect/model");
+const Join = require("../join/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 const { Op } = require("sequelize");
@@ -14,16 +14,13 @@ router.post("/store", async function(req, res, next) {
     const googleRequest = await request(
       `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
     );
-
     const updatedStore = {
       ...newStore,
       name: googleRequest.body.result.name
       // opening_hours: googleRequest.body.result.opening_hours.weekday_text
     };
-
     const createdStore = await Store.create(updatedStore);
-    const connection = Connect.create({
-      userId,
+    const join = Join.create({
       productId,
       storeId: createdStore.id
     });
@@ -50,21 +47,10 @@ router.get("/store", async (req, res, next) => {
 router.get("/store/:id", async (req, res, next) => {
   const storeId = req.params.id;
   try {
-    const store = await Store.findByPk(storeId);
-    if (!store) {
-      res.status(404).send({ message: "Store with this ID doesn't exist" });
-    } else {
-      const storeProducts = await Connect.findAll({
-        where: { storeId: storeId }
-      });
-      const storeProductsIds = storeProducts.map(connect => connect.productId);
-      const allProducts = await Product.findAll();
-      const products = allProducts.filter(product =>
-        storeProductsIds.includes(product.id)
-      );
-      const data = { store, products };
-      res.send(data);
-    }
+    const store = await Store.findByPk(storeId, {
+      include: [{ model: Product, as: "Product" }]
+    });
+    res.send(store);
   } catch (error) {
     next(error);
   }
