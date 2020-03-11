@@ -3,7 +3,6 @@ const User = require("./model");
 const bcrypt = require("bcrypt");
 const router = new Router();
 
-// add new user = signup
 router.post("/user", async (req, res, next) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -26,23 +25,6 @@ router.post("/user", async (req, res, next) => {
   }
 });
 
-// get all users for testing
-// router.get("/user", async (req, res, next) => {
-//   try {
-//     const users = await User.findAll();
-//     if (!users.length) {
-//       res
-//         .status(404)
-//         .send({ message: "No users yet" })
-//         .end();
-//     }
-//     res.send(users);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// get one user info
 router.get("/user/:id", async (req, res, next) => {
   const userId = req.params.id;
   try {

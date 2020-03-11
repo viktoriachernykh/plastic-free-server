@@ -8,7 +8,7 @@ const userRouter = require("./user/router");
 const authRouter = require("./authentication/router");
 const storeRouter = require("./store/router");
 const productRouter = require("./product/router");
-const connectRouter = require("./connect/router");
+const joinRouter = require("./join/router");
 
 require("dotenv").config();
 
@@ -22,6 +22,6 @@ app.use(corsMiddleware);
 const jsonMiddleware = express.json();
 app.use(jsonMiddleware);
 
-app.use(userRouter, authRouter, storeRouter, productRouter, connectRouter);
+app.use(userRouter, authRouter, storeRouter, productRouter, joinRouter);
 
 app.listen(port, onListen);
