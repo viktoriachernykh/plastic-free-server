@@ -34,20 +34,15 @@ router.get("/product/:id", async (req, res, next) => {
   const productId = req.params.id;
   try {
     const product = await Product.findByPk(productId);
-    if (!product) {
-      res.status(404).send({ message: "Product with this ID doesn't exist" });
-    } else {
-      const productStores = await Connect.findAll({
-        where: { productId: productId }
-      });
-      const productStoresIds = productStores.map(connect => connect.storeId);
-      const allStores = await Store.findAll();
-      const stores = allStores.filter(store =>
-        productStoresIds.includes(store.id)
-      );
-      const data = { product, stores };
-      res.send(data);
-    }
+    const productConnections = await Connect.findAll({
+      where: { productId: productId }
+    });
+    const productStoresId = await productConnections.map(c => c.storeId);
+    const stores = await Store.findAll({
+      where: { id: productStoresId }
+    });
+    const data = { product, stores };
+    res.send(data);
   } catch (error) {
     next(error);
   }
