@@ -8,29 +8,26 @@ const router = new Router();
 const { Op } = require("sequelize");
 
 router.post("/store", async function(req, res, next) {
-  // googleId = req.body.google_place_id;
+  const { newStore, userId, productId } = req.body;
+  googleId = newStore.google_place_id;
   try {
-    // request(
-    //   `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
-    // ).then(res => {
-    // const newStore = {
-    //     ...req.body,
-    //     name: res.body.result.name
-    //     // opening_hours: res.body.result.opening_hours.weekday_text
-    //   };
-    //   // try {
-    //   console.log("=====newStore=======", newStore);
-    const store = await Store.create(req.body);
-    // console.log("=====store=======", store);
-    // .then(res => {
-    //   console.log("=====store created=======", res.dataValues);
-    //   // const thestore = res.dataValues;
-    // });
-    // console.log("=====store=====", store);
-    res.send(store);
+    const googleRequest = await request(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
+    );
 
-    // );
-    // });
+    const updatedStore = {
+      ...newStore,
+      name: googleRequest.body.result.name
+      // opening_hours: googleRequest.body.result.opening_hours.weekday_text
+    };
+
+    const createdStore = await Store.create(updatedStore);
+    const connection = Connect.create({
+      userId,
+      productId,
+      storeId: createdStore.id
+    });
+    res.send(createdStore);
   } catch (error) {
     next(error);
   }
