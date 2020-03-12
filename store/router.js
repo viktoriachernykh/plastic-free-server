@@ -15,7 +15,6 @@ router.post("/store", async function(req, res, next) {
       address: newStore.address
     }
   });
-  console.log("===== sameStore =====", sameStore);
   if (sameStore) {
     try {
       const join = await Join.create({
@@ -54,7 +53,8 @@ router.get("/store", async (req, res, next) => {
   try {
     const stores = await Store.findAndCountAll({
       limit,
-      offset
+      offset,
+      include: [{ model: Product, as: "Product" }]
     });
     res.send(stores);
   } catch (error) {
