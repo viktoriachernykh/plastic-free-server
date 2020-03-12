@@ -7,12 +7,18 @@ const { Op } = require("sequelize");
 
 // router.post("/product", auth, async function(req, res, next) {
 router.post("/product", async function(req, res, next) {
-  try {
-    const product = await Product.create(req.body);
-    res.send(product);
-  } catch (error) {
-    next(error);
-  }
+  const sameProduct = await Product.findOne({
+    where: {
+      name: req.body.name
+    }
+  });
+  if (!sameProduct)
+    try {
+      const product = await Product.create(req.body);
+      res.send(product);
+    } catch (error) {
+      next(error);
+    }
 });
 
 router.get("/product", async (req, res, next) => {
