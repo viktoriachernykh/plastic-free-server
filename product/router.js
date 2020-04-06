@@ -1,7 +1,6 @@
 const { Router } = require("express");
 const Product = require("./model");
 const Store = require("../store/model");
-// const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 const { Op } = require("sequelize");
 
