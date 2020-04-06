@@ -2,24 +2,24 @@ const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const Product = require("../product/model");
-const Join = require("../join/model");
+const Join = require("../product_store/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 const { Op } = require("sequelize");
 
-router.post("/store", async function(req, res, next) {
+router.post("/store", async function (req, res, next) {
   const { newStore, userId, productId } = req.body;
   googleId = newStore.google_place_id;
   const sameStore = await Store.findOne({
     where: {
-      address: newStore.address
-    }
+      address: newStore.address,
+    },
   });
   if (sameStore) {
     try {
       const join = await Join.create({
         productId,
-        storeId: sameStore.id
+        storeId: sameStore.id,
       });
       res.send(sameStore);
     } catch (error) {
@@ -32,13 +32,13 @@ router.post("/store", async function(req, res, next) {
       );
       const updatedStore = {
         ...newStore,
-        name: googleRequest.body.result.name
+        name: googleRequest.body.result.name,
         // opening_hours: googleRequest.body.result.opening_hours.weekday_text
       };
       const createdStore = await Store.create(updatedStore);
       const join = await Join.create({
         productId,
-        storeId: createdStore.id
+        storeId: createdStore.id,
       });
       res.send(createdStore);
     } catch (error) {
@@ -54,7 +54,7 @@ router.get("/store", async (req, res, next) => {
     const stores = await Store.findAndCountAll({
       limit,
       offset,
-      include: [{ model: Product, as: "Product" }]
+      include: [{ model: Product, as: "Product" }],
     });
     res.send(stores);
   } catch (error) {
@@ -66,7 +66,7 @@ router.get("/store/:id", async (req, res, next) => {
   const storeId = req.params.id;
   try {
     const store = await Store.findByPk(storeId, {
-      include: [{ model: Product, as: "Product" }]
+      include: [{ model: Product, as: "Product" }],
     });
     res.send(store);
   } catch (error) {
@@ -79,8 +79,8 @@ router.get("/store/find/:keyword", async (req, res, next) => {
   try {
     const store = await Store.findAll({
       where: {
-        name: { [Op.iLike]: `%${keyword}%` }
-      }
+        name: { [Op.iLike]: `%${keyword}%` },
+      },
     });
     if (!store.length > 0) {
       res.status(404).send({ message: "Store with this name doesn't exist" });
