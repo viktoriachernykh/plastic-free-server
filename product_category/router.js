@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const Join = require("./model");
+const JoinProductCategory = require("./model");
 const router = new Router();
 
 router.post("/JoinProductCategory", async function (req, res, next) {
