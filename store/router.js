@@ -2,7 +2,7 @@ const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const Product = require("../product/model");
-const Join = require("../product_store/model");
+const JoinProductStore = require("../product_store/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 const { Op } = require("sequelize");
@@ -17,7 +17,7 @@ router.post("/store", async function (req, res, next) {
   });
   if (sameStore) {
     try {
-      const join = await Join.create({
+      const join = await JoinProductStore.create({
         productId,
         storeId: sameStore.id,
       });
@@ -33,10 +33,9 @@ router.post("/store", async function (req, res, next) {
       const updatedStore = {
         ...newStore,
         name: googleRequest.body.result.name,
-        // opening_hours: googleRequest.body.result.opening_hours.weekday_text
       };
       const createdStore = await Store.create(updatedStore);
-      const join = await Join.create({
+      const join = await JoinProductStore.create({
         productId,
         storeId: createdStore.id,
       });

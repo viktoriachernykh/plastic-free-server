@@ -4,8 +4,6 @@ const Category = require("./model");
 const router = new Router();
 
 router.post("/category", async function (req, res, next) {
-  console.log("=====================", req.body.name);
-
   const sameCategory = await Category.findOne({
     where: {
       name: req.body.name,
