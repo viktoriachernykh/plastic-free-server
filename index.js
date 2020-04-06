@@ -9,8 +9,7 @@ const authRouter = require("./authentication/router");
 const storeRouter = require("./store/router");
 const productRouter = require("./product/router");
 const categoryRouter = require("./category/router");
-const productCategoryRouter = require("./product_category/router");
-const productStoreRouter = require("./product_store/router");
+const joinRouter = require("./product_store/router");
 
 require("dotenv").config();
 
@@ -30,8 +29,7 @@ app.use(
   storeRouter,
   productRouter,
   categoryRouter,
-  productCategoryRouter,
-  productStoreRouter
+  joinRouter
 );
 
 app.listen(port, onListen);

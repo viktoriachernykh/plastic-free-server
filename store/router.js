@@ -2,13 +2,13 @@ const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const Product = require("../product/model");
-const JoinProductStore = require("../product_store/model");
+const Join = require("../product_store/model");
 // const { auth } = require("../authentication/authMiddleware");
 const router = new Router();
 const { Op } = require("sequelize");
 
 router.post("/store", async function (req, res, next) {
-  const { newStore, userId, productId } = req.body;
+  const { newStore, productId } = req.body;
   googleId = newStore.google_place_id;
   const sameStore = await Store.findOne({
     where: {
@@ -17,7 +17,7 @@ router.post("/store", async function (req, res, next) {
   });
   if (sameStore) {
     try {
-      const join = await JoinProductStore.create({
+      const join = await Join.create({
         productId,
         storeId: sameStore.id,
       });
@@ -35,7 +35,7 @@ router.post("/store", async function (req, res, next) {
         name: googleRequest.body.result.name,
       };
       const createdStore = await Store.create(updatedStore);
-      const join = await JoinProductStore.create({
+      const join = await Join.create({
         productId,
         storeId: createdStore.id,
       });

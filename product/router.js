@@ -5,12 +5,11 @@ const Store = require("../store/model");
 const router = new Router();
 const { Op } = require("sequelize");
 
-// router.post("/product", auth, async function(req, res, next) {
-router.post("/product", async function(req, res, next) {
+router.post("/product", async function (req, res, next) {
   const sameProduct = await Product.findOne({
     where: {
-      name: req.body.name
-    }
+      name: req.body.name,
+    },
   });
   if (!sameProduct)
     try {
@@ -27,7 +26,7 @@ router.get("/product", async (req, res, next) => {
   try {
     const products = await Product.findAndCountAll({
       limit,
-      offset
+      offset,
     });
     res.send(products);
   } catch (error) {
@@ -39,7 +38,7 @@ router.get("/product/:id", async (req, res, next) => {
   const productId = req.params.id;
   try {
     const product = await Product.findByPk(productId, {
-      include: [{ model: Store, as: "Store" }]
+      include: [{ model: Store, as: "Store" }],
     });
     res.send(product);
   } catch (error) {
@@ -51,7 +50,7 @@ router.get("/product/find/:keyword", async (req, res, next) => {
   const keyword = req.params.keyword;
   try {
     const product = await Product.findAll({
-      where: { name: { [Op.iLike]: `%${keyword}%` } }
+      where: { name: { [Op.iLike]: `%${keyword}%` } },
     });
     if (!product.length > 0) {
       res.status(404).send({ message: "Product with this name doesn't exist" });
