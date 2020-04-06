@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const Category = require("./model");
+const Product = require("../product/model");
 
 const router = new Router();
 
@@ -16,6 +17,27 @@ router.post("/category", async function (req, res, next) {
     } catch (error) {
       next(error);
     }
+});
+
+router.get("/category", async (req, res, next) => {
+  try {
+    const categories = await Category.findAll();
+    res.send(categories);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/category/:id", async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const products = await Product.findAll({
+      where: { categoryId: id },
+    });
+    res.send(products);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
