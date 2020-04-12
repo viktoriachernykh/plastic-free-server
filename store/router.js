@@ -1,6 +1,7 @@
 const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
+const City = require("../city/model");
 const Product = require("../product/model");
 const Join = require("../product_store/model");
 // const { auth } = require("../authentication/authMiddleware");
@@ -28,11 +29,20 @@ router.post("/store", async function (req, res, next) {
   } else {
     try {
       const googleRequest = await request(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name,opening_hours,rating,formatted_phone_number&key=${process.env.API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name&key=${process.env.API_KEY}`
       );
+      const sameCity = await City.findOne({
+        where: { name: newStore.city },
+      });
+      const city = sameCity
+        ? sameCity
+        : await City.create({ name: newStore.city });
       const updatedStore = {
-        ...newStore,
         name: googleRequest.body.result.name,
+        address: newStore.address,
+        coordinate_lat: newStore.coordinate_lat,
+        coordinate_lng: newStore.coordinate_lng,
+        cityId: city.id,
       };
       const createdStore = await Store.create(updatedStore);
       const join = await Join.create({
@@ -47,13 +57,13 @@ router.post("/store", async function (req, res, next) {
 });
 
 router.get("/store", async (req, res, next) => {
-  const limit = Math.min(req.query.limit || 5, 100);
-  const offset = req.query.offset || 0;
+  // const limit = Math.min(req.query.limit || 5, 100);
+  // const offset = req.query.offset || 0;
   try {
-    const stores = await Store.findAndCountAll({
-      limit,
-      offset,
-      include: [{ model: Product, as: "Product" }],
+    const stores = await Store.findAll({
+      // limit,
+      // offset,
+      // include: [Product],
     });
     res.send(stores);
   } catch (error) {
