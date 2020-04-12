@@ -2,6 +2,7 @@ const request = require("superagent");
 const { Router } = require("express");
 const Store = require("./model");
 const City = require("../city/model");
+const Country = require("../country/model");
 const Product = require("../product/model");
 const Join = require("../product_store/model");
 // const { auth } = require("../authentication/authMiddleware");
@@ -31,12 +32,21 @@ router.post("/store", async function (req, res, next) {
       const googleRequest = await request(
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${googleId}&fields=name&key=${process.env.API_KEY}`
       );
+
+      const sameCountry = await Country.findOne({
+        where: { name: newStore.country },
+      });
+      const country = sameCountry
+        ? sameCountry
+        : await Country.create({ name: newStore.country });
+
       const sameCity = await City.findOne({
-        where: { name: newStore.city },
+        where: { name: newStore.city, countryId: country.id },
       });
       const city = sameCity
         ? sameCity
-        : await City.create({ name: newStore.city });
+        : await City.create({ name: newStore.city, countryId: country.id });
+
       const updatedStore = {
         name: googleRequest.body.result.name,
         address: newStore.address,
