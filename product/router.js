@@ -35,6 +35,8 @@ router.get("/product", async (req, res, next) => {
 
 router.get("/product/:id", async (req, res, next) => {
   const productId = req.params.id;
+  console.log("productId", req);
+
   try {
     const product = await Product.findByPk(productId, {
       include: [{ model: Store, as: "Store" }],

@@ -10,6 +10,7 @@ const storeRouter = require("./store/router");
 const productRouter = require("./product/router");
 const categoryRouter = require("./category/router");
 const joinRouter = require("./product_store/router");
+const cityRouter = require("./city/router");
 
 require("dotenv").config();
 
@@ -29,6 +30,7 @@ app.use(
   storeRouter,
   productRouter,
   categoryRouter,
+  cityRouter,
   joinRouter
 );
 
