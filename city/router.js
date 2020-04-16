@@ -1,27 +1,18 @@
 const { Router } = require("express");
+const { Op } = require("sequelize");
 const City = require("./model");
-
 const router = new Router();
 
-router.get("/city", async (req, res, next) => {
+router.get("/city/:key", async (req, res, next) => {
+  const { key } = req.params;
   try {
-    const city = await City.findAll();
-    res.send(city);
+    const cities = await City.findAll({
+      where: { name: { [Op.iLike]: `%${key}%` } },
+    });
+    res.send(cities);
   } catch (error) {
     next(error);
   }
 });
-
-// router.get("/city/:id", async (req, res, next) => {
-//   const id = req.params.id;
-//   try {
-//     const stores = await Product.findAll({
-//       where: { cityId: id },
-//     });
-//     res.send(products);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 module.exports = router;

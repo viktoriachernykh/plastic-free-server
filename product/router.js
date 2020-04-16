@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const Product = require("./model");
 const Store = require("../store/model");
+const City = require("../city/model");
+
 const router = new Router();
 const { Op } = require("sequelize");
 
@@ -35,8 +37,6 @@ router.get("/product", async (req, res, next) => {
 
 router.get("/product/:id", async (req, res, next) => {
   const productId = req.params.id;
-  console.log("productId", req);
-
   try {
     const product = await Product.findByPk(productId, {
       include: [{ model: Store, as: "Store" }],
@@ -47,16 +47,24 @@ router.get("/product/:id", async (req, res, next) => {
   }
 });
 
-router.get("/product/find/:keyword", async (req, res, next) => {
-  const keyword = req.params.keyword;
+router.get("/product/find/:keyword/:city", async (req, res, next) => {
+  const { keyword, city } = req.params;
   try {
-    const product = await Product.findAll({
-      where: { name: { [Op.iLike]: `%${keyword}%` } },
-    });
-    if (!product.length > 0) {
-      res.status(404).send({ message: "Product with this name doesn't exist" });
+    const findCity = await City.findOne({ where: { name: city } });
+    if (!findCity) {
+      res.send({ keyword, city });
     } else {
-      res.send(product);
+      const product = await Product.findAll({
+        where: { name: { [Op.iLike]: `%${keyword}%` } },
+        include: [
+          { model: Store, as: "Store", where: { cityId: findCity.id } },
+        ],
+      });
+      if (product.length === 0) {
+        res.send({ keyword, city });
+      } else {
+        res.send(product);
+      }
     }
   } catch (error) {
     next(error);
