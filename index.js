@@ -7,6 +7,7 @@ const port = process.env.PORT || 4000;
 const userRouter = require("./user/router");
 const authRouter = require("./authentication/router");
 const storeRouter = require("./store/router");
+const onlineStoreRouter = require("./store_online/router");
 const productRouter = require("./product/router");
 const categoryRouter = require("./category/router");
 const joinRouter = require("./product_store/router");
@@ -28,6 +29,7 @@ app.use(
   userRouter,
   authRouter,
   storeRouter,
+  onlineStoreRouter,
   productRouter,
   categoryRouter,
   cityRouter,
