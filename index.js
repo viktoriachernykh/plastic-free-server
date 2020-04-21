@@ -6,12 +6,15 @@ const port = process.env.PORT || 4000;
 
 const userRouter = require("./user/router");
 const authRouter = require("./authentication/router");
-const storeRouter = require("./store/router");
-const onlineStoreRouter = require("./store_online/router");
+
 const productRouter = require("./product/router");
-const categoryRouter = require("./category/router");
-const joinRouter = require("./product_store/router");
+const locationRouter = require("./location/router");
+const onlineStoreRouter = require("./online_store/router");
+const joinProductLocationRouter = require("./product_location/router");
+const joinProductOnlineStoreRouter = require("./product_online_store/router");
+
 const cityRouter = require("./city/router");
+const countryRouter = require("./country/router");
 
 require("dotenv").config();
 
@@ -28,12 +31,13 @@ app.use(jsonMiddleware);
 app.use(
   userRouter,
   authRouter,
-  storeRouter,
-  onlineStoreRouter,
   productRouter,
-  categoryRouter,
+  locationRouter,
+  onlineStoreRouter,
   cityRouter,
-  joinRouter
+  countryRouter,
+  joinProductLocationRouter,
+  joinProductOnlineStoreRouter
 );
 
 app.listen(port, onListen);

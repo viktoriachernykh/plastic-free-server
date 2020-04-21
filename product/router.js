@@ -1,7 +1,9 @@
 const { Router } = require("express");
 const Product = require("./model");
-const Store = require("../store/model");
+const Location = require("../location/model");
+const OnlineStore = require("../online_store/model");
 const City = require("../city/model");
+const Country = require("../country/model");
 
 const router = new Router();
 const { Op } = require("sequelize");
@@ -20,32 +22,6 @@ router.post("/product", async function (req, res, next) {
       next(error);
     }
 });
-
-// router.get("/product", async (req, res, next) => {
-//   const limit = Math.min(req.query.limit || 5, 100);
-//   const offset = req.query.offset || 0;
-//   try {
-//     const products = await Product.findAndCountAll({
-//       limit,
-//       offset,
-//     });
-//     res.send(products);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.get("/product/:id", async (req, res, next) => {
-//   const productId = req.params.id;
-//   try {
-//     const product = await Product.findByPk(productId, {
-//       include: [{ model: Store, as: "Store" }],
-//     });
-//     res.send(product);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 router.get("/product/find/:keyword", async (req, res, next) => {
   const { keyword } = req.params;
@@ -73,9 +49,15 @@ router.get("/product/find/:id/:city", async (req, res, next) => {
       const product = await Product.findByPk(id);
       res.send({ product, city });
     } else {
+      const findCountry = await Country.findByPk(findCity.countryId);
       const product = await Product.findByPk(id, {
         include: [
-          { model: Store, as: "Store", where: { cityId: findCity.id } },
+          { model: Location, as: "Location", where: { cityId: findCity.id } },
+          {
+            model: OnlineStore,
+            as: "OnlineStore",
+            where: { countryId: findCountry.id },
+          },
         ],
       });
       if (!product) {

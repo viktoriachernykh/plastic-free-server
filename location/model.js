@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const db = require("../db");
 const City = require("../city/model");
 
-const Store = db.define("store", {
+const Location = db.define("location", {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -14,6 +14,6 @@ const Store = db.define("store", {
   coordinate_lat: { type: Sequelize.STRING },
   coordinate_lng: { type: Sequelize.STRING },
 });
-Store.belongsTo(City);
+Location.belongsTo(City);
 
-module.exports = Store;
+module.exports = Location;
