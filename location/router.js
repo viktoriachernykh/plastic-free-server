@@ -59,7 +59,6 @@ router.post("/location", async function (req, res, next) {
         coordinate_lng: newLocation.coordinate_lng,
         cityId: city.id,
       };
-
       const createdLocation = await Location.create(updatedLocation);
       const join = await ProductLocation.create({
         productId,
@@ -69,21 +68,6 @@ router.post("/location", async function (req, res, next) {
     } catch (error) {
       next(error);
     }
-  }
-});
-
-router.get("/location", async (req, res, next) => {
-  // const limit = Math.min(req.query.limit || 5, 100);
-  // const offset = req.query.offset || 0;
-  try {
-    const locations = await Location.findAll({
-      // limit,
-      // offset,
-      // include: [Product],
-    });
-    res.send(locations);
-  } catch (error) {
-    next(error);
   }
 });
 

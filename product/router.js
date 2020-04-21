@@ -50,6 +50,7 @@ router.get("/product/find/:id/:city", async (req, res, next) => {
       res.send({ product, city });
     } else {
       const findCountry = await Country.findByPk(findCity.countryId);
+
       const product = await Product.findByPk(id, {
         include: [
           { model: Location, as: "Location", where: { cityId: findCity.id } },
@@ -60,6 +61,8 @@ router.get("/product/find/:id/:city", async (req, res, next) => {
           },
         ],
       });
+      console.log(product);
+
       if (!product) {
         const product = await Product.findByPk(id);
         res.send({ product, city });
