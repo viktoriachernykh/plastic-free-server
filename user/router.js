@@ -1,5 +1,7 @@
 const { Router } = require("express");
 const User = require("./model");
+const Location = require("../location/model");
+const OnlineStore = require("../online_store/model");
 const bcrypt = require("bcrypt");
 const router = new Router();
 
@@ -9,7 +11,7 @@ router.post("/user", async (req, res, next) => {
     res
       .status(400)
       .send({
-        message: "Please fill name, email and password fields"
+        message: "Please fill name, email and password fields",
       })
       .end();
   }
@@ -17,7 +19,7 @@ router.post("/user", async (req, res, next) => {
     const user = await User.create({
       name: name,
       email: email,
-      password: bcrypt.hashSync(password, 10)
+      password: bcrypt.hashSync(password, 10),
     });
     res.send(user);
   } catch (error) {
@@ -26,15 +28,19 @@ router.post("/user", async (req, res, next) => {
 });
 
 router.get("/user/:id", async (req, res, next) => {
-  const userId = req.params.id;
   try {
-    const user = await User.findByPk(userId);
-    if (!user) {
-      res
-        .status(404)
-        .send({ message: "User with this ID doesn't exist" })
-        .end();
-    }
+    const user = await User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Location,
+          as: "Location",
+        },
+        {
+          model: OnlineStore,
+          as: "OnlineStore",
+        },
+      ],
+    });
     res.send(user);
   } catch (error) {
     next(error);

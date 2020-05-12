@@ -13,15 +13,21 @@ router.post("/online_store", async function (req, res, next) {
         countryId: countryId,
       },
     });
-    const newOnlineStore = sameStore
-      ? sameStore
-      : { link: link, countryId: countryId };
-    const createdStore = await OnlineStore.create(newOnlineStore);
-    const join = await ProductOnlineStore.create({
-      productId,
-      onlineStoreId: createdStore.id,
-    });
-    res.send(createdStore);
+    if (sameStore) {
+      const join = await ProductOnlineStore.create({
+        productId,
+        onlineStoreId: sameStore.id,
+      });
+      res.send(sameStore);
+    } else {
+      const newOnlineStore = { link: link, countryId: countryId };
+      const createdStore = await OnlineStore.create(newOnlineStore);
+      const join = await ProductOnlineStore.create({
+        productId,
+        onlineStoreId: createdStore.id,
+      });
+      res.send(createdStore);
+    }
   } catch (error) {
     next(error);
   }

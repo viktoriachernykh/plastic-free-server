@@ -3,6 +3,7 @@ const { Router } = require("express");
 
 const Product = require("../product/model");
 const Location = require("./model");
+const LikedLocation = require("../user_location/model");
 const ProductLocation = require("../product_location/model");
 const City = require("../city/model");
 const Country = require("../country/model");
@@ -13,12 +14,14 @@ const { Op } = require("sequelize");
 
 router.post("/location", async function (req, res, next) {
   const { newLocation, productId } = req.body;
+
   googleId = newLocation.google_place_id;
   const sameLocation = await Location.findOne({
     where: {
       address: newLocation.address,
     },
   });
+
   if (sameLocation) {
     try {
       const join = await ProductLocation.create({
@@ -44,7 +47,6 @@ router.post("/location", async function (req, res, next) {
         : await Country.findOne({
             where: { name: { [Op.iLike]: `%${newLocation.country}%` } },
           });
-
       const sameCity = await City.findOne({
         where: { name: newLocation.city, countryId: country.id },
       });
