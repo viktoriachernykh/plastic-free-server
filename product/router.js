@@ -31,12 +31,10 @@ router.get('/product/:id', async (req, res, next) => {
         {
           model: Location,
           as: 'Location',
-          // include: [{ model: City, as: 'city' }],
         },
         {
           model: OnlineStore,
           as: 'OnlineStore',
-          // include: [{ model: Country, as: 'country' }],
         },
       ],
     });
@@ -75,14 +73,21 @@ router.get('/product/find/:id/:city', async (req, res, next) => {
       const findCountry = await Country.findByPk(findCity.countryId);
       const product = await Product.findByPk(id, {
         include: [
-          { model: Location, as: 'Location', where: { cityId: findCity.id } },
+          {
+            model: Location,
+            as: 'Location',
+            where: { cityId: findCity.id },
+            required: false,
+          },
           {
             model: OnlineStore,
             as: 'OnlineStore',
             where: { countryId: findCountry.id },
+            required: false,
           },
         ],
       });
+
       if (!product) {
         const product = await Product.findByPk(id);
         res.send({ product, city });
