@@ -31,10 +31,12 @@ router.get('/product/:id', async (req, res, next) => {
         {
           model: Location,
           as: 'Location',
+          // required: false,
         },
         {
           model: OnlineStore,
           as: 'OnlineStore',
+          // required: false,
         },
       ],
     });

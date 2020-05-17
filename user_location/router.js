@@ -3,13 +3,8 @@ const LikedLocation = require('./model');
 const router = new Router();
 
 router.post('/user_location', async function (req, res, next) {
-  const { userId, locationId } = req.body;
-  console.log(userId, locationId);
-
   try {
     const like = await LikedLocation.create(req.body);
-    console.log('like', like.userId, like.locationId);
-
     res.send(like);
   } catch (error) {
     next(error);
@@ -18,7 +13,6 @@ router.post('/user_location', async function (req, res, next) {
 
 router.delete('/user_location', async function (req, res, next) {
   const { userId, locationId } = req.body;
-
   try {
     const dislike = await LikedLocation.destroy({
       where: {
