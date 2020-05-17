@@ -89,7 +89,6 @@ router.get('/product/find/:id/:city', async (req, res, next) => {
           },
         ],
       });
-
       if (!product) {
         const product = await Product.findByPk(id);
         res.send({ product, city });
