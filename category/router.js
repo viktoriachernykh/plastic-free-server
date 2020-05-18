@@ -29,14 +29,17 @@ router.get('/category', async (req, res, next) => {
     if (categories.length > 1) {
       res.send(categories);
     } else {
-      // categoriesData.map((c) => console.log(c.name));
-      categoriesData.map((c) => Category.create({ name: c.name }));
-      // productsData.map((p) => console.log(p.name, p.categoryId));
-      productsData.map((p) =>
+      const createCategories = categoriesData.map((c) =>
+        Category.create({ name: c.name })
+      );
+      const createProducts = productsData.map((p) =>
         Product.create({ name: p.name, categoryId: p.categoryId })
       );
-      // countriesData.map((c) => console.log(c.name));
-      countriesData.map((c) => Country.create({ name: c.name }));
+      const createCountries = countriesData.map((c) =>
+        Country.create({ name: c.name })
+      );
+      const createdCategories = Category.findAll();
+      res.send(createdCategories);
     }
   } catch (error) {
     next(error);
