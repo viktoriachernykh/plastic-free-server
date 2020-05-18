@@ -1,5 +1,4 @@
-## App for people who want to use less plastic :whale:
-Server repo of full-stack app for searching all plastic free products in your city
+## Server repo of full-stack app for searching all plastic free products in your city :whale:
 
 ## Technologies used
 
