@@ -2,9 +2,9 @@ const { Router } = require('express');
 const Category = require('./model');
 const Product = require('../product/model');
 const Country = require('../country/model');
-const categoriesData = require('../data/categories');
-const productsData = require('../data/products');
-const countriesData = require('../data/countries');
+const categoriesData = require('./../data/categories');
+const productsData = require('./../data/products');
+const countriesData = require('./../data/countries');
 
 const router = new Router();
 
@@ -26,13 +26,16 @@ router.post('/category', async function (req, res, next) {
 router.get('/category', async (req, res, next) => {
   try {
     const categories = await Category.findAll();
-    if (categories.length > 0) {
+    if (categories.length > 1) {
       res.send(categories);
     } else {
+      // categoriesData.map((c) => console.log(c.name));
       categoriesData.map((c) => Category.create({ name: c.name }));
+      // productsData.map((p) => console.log(p.name, p.categoryId));
       productsData.map((p) =>
         Product.create({ name: p.name, categoryId: p.categoryId })
       );
+      // countriesData.map((c) => console.log(c.name));
       countriesData.map((c) => Country.create({ name: c.name }));
     }
   } catch (error) {
