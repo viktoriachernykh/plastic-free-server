@@ -1,4 +1,5 @@
 ## Server repo of full-stack app for searching all plastic free products in your city :whale:
+Client repo here: [https://github.com/viktoriachernykh/plastic-free-client]
 
 ## Technologies used
 
