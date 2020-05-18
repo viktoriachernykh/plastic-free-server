@@ -11,7 +11,7 @@ Client repo here: [https://github.com/viktoriachernykh/plastic-free-client]
 
 ## Setup
 
-In order to run this App:
+In order to run this server:
 - git clone git@github.com:viktoriachernykh/plastic-free-server.git
 - npm install
 - ensure you have Google API key set as environment variable (API_KEY="your key here")
